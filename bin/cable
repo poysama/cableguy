@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+CABLE_LIB_PATH = File.expand_path(File.join(File.dirname(__FILE__), '../lib/palmade'))
+require File.join(CABLE_LIB_PATH, 'cableguy')
+
+Palmade::Cableguy.configure(Dir.pwd)
+
