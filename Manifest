@@ -1,0 +1,9 @@
+Rakefile
+bin/cable
+lib/cableconfig.rb
+lib/cableguy.rb
+lib/cabling.rb
+lib/confighelper.rb
+lib/configurator.rb
+lib/templatebinding.rb
+Manifest
