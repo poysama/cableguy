@@ -19,6 +19,7 @@ module Palmade::Cableguy
           if applications.include?(app_name)
             this_app = (applications[app_name] || applications).dup
             this_app = self.class.new if this_app.nil? || this_app.empty?
+
             this_app.update!(globals)
 
             @apps_config[app_name] = this_app

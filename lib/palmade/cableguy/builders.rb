@@ -7,6 +7,7 @@ module Palmade::Cableguy
       CableSymlink
       CableCustom
       CableMove
+      CableCopy
     end
 
     autoload :CableChmod, File.join(File.dirname(__FILE__), 'builders/cable_chmod')
@@ -15,6 +16,7 @@ module Palmade::Cableguy
     autoload :CableSymlink, File.join(File.dirname(__FILE__), 'builders/cable_symlink')
     autoload :CableTemplate, File.join(File.dirname(__FILE__), 'builders/cable_template')
     autoload :CableMove, File.join(File.dirname(__FILE__), 'builders/cable_move')
+    autoload :CableCopy, File.join(File.dirname(__FILE__), 'builders/cable_copy')
   end
 end
 

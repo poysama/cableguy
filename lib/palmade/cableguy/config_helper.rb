@@ -55,6 +55,18 @@ module Palmade::Cableguy
     alias :has_key? :include?
 
     def update!(other_hash)
+      #other_hash.each do |k,v|
+        #puts k
+        #puts v
+        #k = convert_key(k)
+        #if @config[k].is_a?(Hash) and other_hash[k].is_a?(Hash)
+        #  @config[k].update!(other_hash[k])
+        #else
+        #  @config[k] = other_hash[k]
+        #end
+      #end
+
+      #puts "other hash is" + other_hash.inspect
       other_hash.each do |k,v|
         @config[convert_key(k)] = convert_val(v)
       end

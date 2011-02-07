@@ -4,6 +4,7 @@ bin/cable
 lib/palmade/cableguy.rb
 lib/palmade/cableguy/builders.rb
 lib/palmade/cableguy/builders/cable_chmod.rb
+lib/palmade/cableguy/builders/cable_copy.rb
 lib/palmade/cableguy/builders/cable_custom.rb
 lib/palmade/cableguy/builders/cable_mkdir.rb
 lib/palmade/cableguy/builders/cable_move.rb
@@ -11,10 +12,10 @@ lib/palmade/cableguy/builders/cable_symlink.rb
 lib/palmade/cableguy/builders/cable_template.rb
 lib/palmade/cableguy/cable.rb
 lib/palmade/cableguy/cable_configurator.rb
-lib/palmade/cableguy/cableconfig.rb
 lib/palmade/cableguy/cabler.rb
 lib/palmade/cableguy/cabling.rb
 lib/palmade/cableguy/config_helper.rb
 lib/palmade/cableguy/configurator.rb
 lib/palmade/cableguy/templatebinding.rb
+lib/palmade/hash.rb
 Manifest
