@@ -3,8 +3,8 @@ module Palmade::Cableguy
     attr_reader :cable
     attr_reader :cabler
     attr_reader :cabling
-    attr_reader :target
     attr_reader :arg_hash
+    attr_reader :target
 
     attr_accessor :output_buffer
 

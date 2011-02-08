@@ -1,24 +1,28 @@
 module Palmade::Cableguy
   class Cabler
     attr_reader :app_root
-    attr_reader :target
     attr_reader :builds
+    attr_reader :target
     attr_accessor :targets
     attr_accessor :app_name
 
     def initialize(app_root)
       @app_root = app_root
-      @target = 'development'
+      @target = :development
       @builds = nil
       @targets = [ :development ]
 
       @configurator_path = File.join(@app_root, DEFAULT_CABLEGUY_PATH)
       @configurator = CableConfigurator.new
 
-      if ENV.include?('CABLING_PATH')
-        @cabling_path = ENV['CABLING_PATH']
-      elsif File.exists?(File.join(@app_root, DEFAULT_CABLING_PATH))
+      if ENV.include?('CABLING_TARGET')
+        @target = ENV['CABLING_TARGET']
+      end
+
+      if File.exists?(File.join(@app_root, DEFAULT_CABLING_PATH))
         @cabling_path = File.join(@app_root, DEFAULT_CABLING_PATH)
+      elsif ENV.include?('CABLING_PATH')
+        @cabling_path = ENV['CABLING_PATH']
       elsif File.exists?(File.expand_path('~/.cabling.yml'))
         @cabling_path = File.expand_path('~/.cabling.yml')
       elsif File.exists?('/etc/cabling.yml')
@@ -43,6 +47,11 @@ module Palmade::Cableguy
         @configurator.configure(@configurator_path)
       else
         raise MissingFile, "Required cableguy file (#{@configurator_path}) not found!"
+      end
+
+      # set target if target exists in cabling globals
+      if @cabling.globals.include?('target')
+        @target = @cabling.globals['target']
       end
 
       self
