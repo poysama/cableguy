@@ -23,14 +23,16 @@ module Palmade::Cableguy
 
       parsed = ERB.new(fcontents, nil, "-%>", "@output_buffer").result(binding)
       parsed = special_parse(parsed, [ '{', '}' ], false)
-      parsed = special_parse(parsed, [ '%', '%' ], true)
+      # parsed = special_parse(parsed, [ '%', '%' ], true)
     end
 
     def special_parse(parsed, delim = [ '{', '}' ], cabling_only = false)
       delim0 = "\\#{delim[0]}"
       delim1 = "\\#{delim[1]}"
+
       parsed = parsed.gsub(/#{delim0}(.+)#{delim1}/) do |match|
         found = $1
+
         if cabling_only
           if respond_to?(found)
             eval_ret = self.send(found)
