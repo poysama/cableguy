@@ -1,46 +1,47 @@
 module Palmade::Cableguy
   class Cabler
+    include Constants
+
     attr_reader :app_root
     attr_reader :builds
+    attr_reader :cabling_path
     attr_reader :target
+    attr_reader :location
+    attr_reader :database
+    attr_reader :cabler
+    attr_reader :logger
+    attr_reader :options
+    attr_reader :db_path
+    attr_reader :db
     attr_accessor :targets
     attr_accessor :app_name
 
-    def initialize(app_root)
+    def initialize(app_root, options)
+      @options = options
       @app_root = app_root
-      @target = :development
+      @cabling_path = @options[:path]
+      @target = @options[:target]
+      @location = @options[:location]
       @builds = nil
       @targets = [ :development ]
-
-      @configurator_path = File.join(@app_root, DEFAULT_CABLEGUY_PATH)
-      @configurator = CableConfigurator.new
-
-      if ENV.include?('CABLING_TARGET')
-        @target = ENV['CABLING_TARGET']
-      end
-
-      if File.exists?(File.join(@app_root, DEFAULT_CABLING_PATH))
-        @cabling_path = File.join(@app_root, DEFAULT_CABLING_PATH)
-      elsif ENV.include?('CABLING_PATH')
-        @cabling_path = ENV['CABLING_PATH']
-      elsif File.exists?(File.expand_path('~/.cabling.yml'))
-        @cabling_path = File.expand_path('~/.cabling.yml')
-      elsif File.exists?('/etc/cabling.yml')
-        @cabling_path = '/etc/cabling.yml'
-      else
-        @cabling_path = nil
-      end
-
-      @cabling = Cabling.new
+      @logger = Logger.new($stdout)
+      @db_path = File.join(@cabling_path, DB_DIRECTORY, "#{@target}.#{DB_EXTENSION}")
+      @db = Palmade::Cableguy::DB.new
     end
 
     def boot
-      # checks for config/cabling.rb
-      if !@cabling_path.nil? && File.exists?(@cabling_path)
-        @cabling.load_from_yml(@cabling_path)
-      else
-        raise MissingFile, "Required cabling file (#{@cabling_path}) not found!"
-      end
+      @database = @db.boot(self)
+
+      self
+    end
+
+    def migrate
+      Migration.new(self).boot
+    end
+
+    def configure
+      @configurator = CableConfigurator.new
+      @configurator_path = File.join(@app_root, DEFAULT_CABLEGUY_PATH)
 
       # checks for config/cableguy.rb
       if File.exists?(@configurator_path)
@@ -49,15 +50,6 @@ module Palmade::Cableguy
         raise MissingFile, "Required cableguy file (#{@configurator_path}) not found!"
       end
 
-      # set target if target exists in cabling globals
-      if @cabling.globals.include?('target')
-        @target = @cabling.globals['target']
-      end
-
-      self
-    end
-
-    def configure
       check_requirements
 
       build_setups.each do |s|

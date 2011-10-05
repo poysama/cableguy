@@ -5,7 +5,6 @@ module Palmade::Cableguy
     attr_reader :cabling
     attr_reader :arg_hash
     attr_reader :target
-
     attr_accessor :output_buffer
 
     def initialize(cable, cabler, cabling, target)
@@ -14,8 +13,16 @@ module Palmade::Cableguy
       @cabling = cabling
       @target = target
       @arg_hash = @cable.args[2]
+      @db = @cabler.db
     end
 
+    def value_of(key)
+      @db.value_of(key)
+    end
+
+    def values_of(key, prefix = false)
+      @db.values_of(key, prefix)
+    end
 
     def parse(file_path)
       Palmade::Cableguy.require_erb
@@ -23,7 +30,6 @@ module Palmade::Cableguy
 
       parsed = ERB.new(fcontents, nil, "-%>", "@output_buffer").result(binding)
       parsed = special_parse(parsed, [ '{', '}' ], false)
-      # parsed = special_parse(parsed, [ '%', '%' ], true)
     end
 
     def special_parse(parsed, delim = [ '{', '}' ], cabling_only = false)
@@ -33,26 +39,11 @@ module Palmade::Cableguy
       parsed = parsed.gsub(/#{delim0}(.+)#{delim1}/) do |match|
         found = $1
 
-        if cabling_only
-          if respond_to?(found)
-            eval_ret = self.send(found)
-          elsif !cabler.app_name.nil?
-            eval_ret = self.send(cabler.app_name)[found.strip]
-          else
-            eval_ret = cabling[found.strip]
-          end
+        if instance_variables.include?("@#{found}".to_sym)
+          eval_ret = self.send(found)
         else
-          if found[0,1] == '['
-            if cabler.app_name.nil?
-              eval_ret = self.instance_eval("cabling#{found}")
-            else
-              eval_ret = self.instance_eval("#{cabler.app_name}#{found}")
-            end
-          else
-            eval_ret = self.instance_eval(found)
-          end
+          eval_ret = value_of(found)
         end
-        eval_ret.to_s.strip
       end
     end
 
@@ -81,19 +72,6 @@ module Palmade::Cableguy
       output_buffer
     ensure
       self.output_buffer = old_buffer
-    end
-
-    def method_missing(method, *args, &block)
-      if cabler.targets.include?(method)
-        if method == target
-          concat(capture(*args, &block))
-        end
-      elsif cabling['applications'].include?(method.to_s) &&
-          args.empty?
-        cabling.app(method.to_s)
-      else
-        super
-      end
     end
   end
 end

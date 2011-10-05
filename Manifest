@@ -13,8 +13,6 @@ lib/palmade/cableguy/builders/cable_template.rb
 lib/palmade/cableguy/cable.rb
 lib/palmade/cableguy/cable_configurator.rb
 lib/palmade/cableguy/cabler.rb
-lib/palmade/cableguy/cabling.rb
-lib/palmade/cableguy/config_helper.rb
 lib/palmade/cableguy/configurator.rb
 lib/palmade/cableguy/templatebinding.rb
 lib/palmade/hash.rb

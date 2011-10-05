@@ -2,6 +2,33 @@
 
 CABLE_LIB_PATH = File.expand_path(File.join(File.dirname(__FILE__), '../lib/palmade'))
 require File.join(CABLE_LIB_PATH, 'cableguy')
+require 'optparse'
 
-Palmade::Cableguy.configure(Dir.pwd)
+options = {}
+optparse = OptionParser.new do |opts|
+  opts.banner = "Set cable options.\n"
+
+  opts.on('-p', '--path PATH', 'Specify cabling path') do |path|
+    options[:path] = path
+  end
+
+  opts.on('-l', '--location LOCATION', 'Specify cabling location') do |location|
+    options[:location] = location
+  end
+
+  opts.on('t', '--target TARGET', 'Specify cabling target') do |target|
+    options[:target] = target
+  end
+
+  opts.on('-h', '--help', 'Help screen') do
+    puts opts
+    exit
+  end
+end
+
+
+optparse.parse!
+
+Palmade::Cableguy::Runner.run(Dir.pwd, ARGV.shift, options)
+
 
