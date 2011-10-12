@@ -32,6 +32,9 @@ module Palmade::Cableguy
     def boot
       @database = @db.boot(self)
 
+      init_file = File.join(@cabling_path, 'init.rb')
+      require init_file if File.exist?(init_file)
+
       self
     end
 

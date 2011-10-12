@@ -11,6 +11,7 @@ module Palmade::Cableguy
     end
 
     def boot
+      file_stack = []
 
       sort_directories.each do |p|
         path = File.join(@cabling_path, p)
@@ -24,19 +25,29 @@ module Palmade::Cableguy
 
           if File.exists?(f)
             require f
+            file_stack.push(f)
           else
             raise "File #{f} doesn't exist!"
           end
-        else
-          f = Dir["#{path}/*.rb"].first
+        elsif p == '.'
+          f = Dir["#{path}/custom.rb"].shift
           require f
+          file_stack.push(f)
+        else
+          Dir["#{path}/*.rb"].each do |d|
+            require d
+            file_stack.push(d)
+          end
         end
 
-        class_name = File.basename(f).chomp(".rb")
-        camelized_class_name = (@utils.camelize(class_name))
-        klass = Palmade::Cableguy::Migrations.const_get(camelized_class_name)
-        k = klass.new(@cabler)
-        k.migrate!
+        file_stack.each do |f|
+          class_name = File.basename(f).chomp(".rb")
+          camelized_class_name = (@utils.camelize(class_name))
+          klass = Palmade::Cableguy::Migrations.const_get(camelized_class_name)
+          k = klass.new(@cabler)
+          k.migrate!
+        end
+        file_stack.clear
       end
     end
 
