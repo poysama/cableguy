@@ -5,6 +5,7 @@ module Palmade::Cableguy
     attr_reader :cabling
     attr_reader :arg_hash
     attr_reader :target
+    attr_reader :db
     attr_accessor :output_buffer
 
     def initialize(cable, cabler, cabling, target)
@@ -14,6 +15,10 @@ module Palmade::Cableguy
       @target = target
       @arg_hash = @cable.args[2]
       @db = @cabler.db
+    end
+
+    def get(key)
+      @db.value_of(key)
     end
 
     def value_of(key)

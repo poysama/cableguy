@@ -26,19 +26,19 @@ module Palmade::Cableguy
       @targets = [ :development ]
       @logger = Logger.new($stdout)
       @db_path = File.join(@cabling_path, DB_DIRECTORY, "#{@target}.#{DB_EXTENSION}")
-      @db = Palmade::Cableguy::DB.new
+      @db = Palmade::Cableguy::DB.new(self)
     end
 
     def boot
-      @database = @db.boot(self)
-
-      init_file = File.join(@cabling_path, 'init.rb')
-      require init_file if File.exist?(init_file)
+      @database = @db.boot
 
       self
     end
 
     def migrate
+      init_file = File.join(@cabling_path, 'init.rb')
+      require init_file if File.exist?(init_file)
+
       Migration.new(self).boot
     end
 

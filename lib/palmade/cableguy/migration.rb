@@ -5,6 +5,8 @@ module Palmade::Cableguy
 
     def initialize(cabler)
       @cabler = cabler
+      @cabler.db.create_table_if_needed
+
       @db = @cabler.db
       @cabling_path = @cabler.cabling_path
       @utils = Palmade::Cableguy::Utils
@@ -30,9 +32,11 @@ module Palmade::Cableguy
             raise "File #{f} doesn't exist!"
           end
         elsif p == '.'
-          f = Dir["#{path}/custom.rb"].shift
-          require f
-          file_stack.push(f)
+          if File.exist?(File.join(path, 'custom.rb'))
+            f = Dir["#{path}/custom.rb"].shift
+            require f
+            file_stack.push(f)
+          end
         else
           Dir["#{path}/*.rb"].each do |d|
             require d
@@ -64,7 +68,16 @@ module Palmade::Cableguy
     end
 
     def group(group, &block)
-      @db.group(group, &block)
+      @group = group
+      @db.group(&block)
+    end
+
+    def globals(&block)
+      @db.globals(&block)
+    end
+
+    def applications(&block)
+      @db.applications(&block)
     end
 
     def prefix(prefix, &block)

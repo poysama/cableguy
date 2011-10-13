@@ -1,14 +1,20 @@
 module Palmade::Cableguy
   class DB
-    def boot(cabler)
+    attr_reader :database
+
+    def initialize(cabler)
+      @cabler = cabler
+      @opts = { :logger => @cabler.logger,
+                :sql_log_level => :debug }
+      @database = nil
+    end
+
+    def boot
+      @database = Sequel.sqlite(@cabler.db_path, @opts)
       @group = ""
       @prefix_stack = []
       @key_prefix = ""
-
-      @db = Sequel.sqlite(cabler.db_path, :logger => cabler.logger , :sql_log_level => :debug)
-      create_table_if_needed
-
-      @database = @db[:cablingdatas]
+      @dataset = @database[:cablingdatas]
     end
 
     def final_key(key)
@@ -23,7 +29,7 @@ module Palmade::Cableguy
     def set(key, value, set = nil)
       set ||= @group
       key = final_key(key)
-      @database.insert(:key => key, :value => value, :set => set)
+      @dataset.insert(:key => key, :value => value, :set => set)
       stack_pop
     end
 
@@ -33,19 +39,29 @@ module Palmade::Cableguy
 
     def delete(key, value)
       key = final_key(key)
-      @database.filter(:key => key).delete
+      @dataset.filter(:key => key).delete
       stack_pop
     end
 
     def update(key, value, set = nil)
       key = final_key(key)
 
-      @database.filter(:key => key).update(:value => value)
+      @dataset.filter(:key => key).update(:value => value)
       stack_pop
     end
 
-    def group(group, &block)
+    def group(group = nil, &block)
       @group = group
+      yield
+    end
+
+    def globals(&block)
+      @group = "globals"
+      yield
+    end
+
+    def applications(&block)
+      @group = "applications"
       yield
     end
 
@@ -60,14 +76,17 @@ module Palmade::Cableguy
     end
 
     def value_of(key)
-      key = @key_prefix + '.' + key unless @key_prefix.empty?
+      if key.scan(/\A#{@cabler.app_name.to_s}/).empty?
+        key = @cabler.app_name.to_s + '.' + key
+      end
 
-      val = @database.where(:key => key)
+      val = @dataset.where(:key => key, :set => 'applications')
 
       if val.empty?
         key.slice!(0, key.index('.') + 1)
-        val = @database.where(:key => key)
+        val = @dataset.where(:key => key, :set => 'globals')
       end
+
       val.first[:value] rescue raise "key \'#{key}\' cannot be found!"
     end
 
@@ -76,11 +95,11 @@ module Palmade::Cableguy
 
       @key_prefix = key if prefix
 
-      res = @database.where(:key.like("#{key}%"))
+      res = @dataset.where(:key.like("#{key}%"))
 
       if res.empty?
         key.slice!(0, key.index('.') + 1)
-        res = @database.where(:key.like("#{key}%"))
+        res = @dataset.where(:key.like("#{key}%"))
       end
 
       res.each do |r|
@@ -93,15 +112,11 @@ module Palmade::Cableguy
       values rescue raise "no values for \'#{key}\'!"
     end
 
-    private
-
     def create_table_if_needed
-      unless @db.table_exists?(:cablingdatas)
-        @db.create_table :cablingdatas do
-          String :key
-          String :value
-          String :set
-        end
+      @database.create_table! :cablingdatas do
+        String :key
+        String :value
+        String :set
       end
     end
   end
