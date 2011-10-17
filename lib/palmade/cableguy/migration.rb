@@ -5,7 +5,6 @@ module Palmade::Cableguy
 
     def initialize(cabler)
       @cabler = cabler
-      @cabler.db.create_table_if_needed
 
       @db = @cabler.db
       @cabling_path = @cabler.cabling_path
@@ -13,6 +12,8 @@ module Palmade::Cableguy
     end
 
     def boot
+      @cabler.db.create_table_if_needed
+
       file_stack = []
 
       sort_directories.each do |p|
