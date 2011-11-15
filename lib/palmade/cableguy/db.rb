@@ -13,7 +13,6 @@ module Palmade::Cableguy
       @database = Sequel.sqlite(@cabler.db_path, @opts)
       @group = ""
       @prefix_stack = []
-      @key_prefix = ""
       @dataset = @database[:cablingdatas]
     end
 
@@ -26,15 +25,13 @@ module Palmade::Cableguy
       key ||= @prefix_stack.join('.')
     end
 
-    def set(key, value, set = nil)
-      set ||= @group
+    def set(key, value, group = nil)
+      group ||= @group
       key = final_key(key)
-      @dataset.insert(:key => key, :value => value, :set => set)
-      stack_pop
-    end
 
-    def get(key)
-      value_of(key)
+      @dataset.insert(:key => key, :value => value, :group => group)
+
+      stack_pop
     end
 
     def delete(key, value)
@@ -45,29 +42,26 @@ module Palmade::Cableguy
 
     def update(key, value, set = nil)
       key = final_key(key)
-
       @dataset.filter(:key => key).update(:value => value)
       stack_pop
     end
 
     def group(group = nil, &block)
       @group = group
+
       yield
     end
 
     def globals(&block)
       @group = "globals"
-      yield
-    end
 
-    def applications(&block)
-      @group = "applications"
       yield
     end
 
     def prefix(prefix, &block)
       @prefix_stack.push(prefix)
       yield
+
       stack_pop
     end
 
@@ -75,48 +69,44 @@ module Palmade::Cableguy
       @prefix_stack.pop
     end
 
-    def value_of(key)
-      if key.scan(/\A#{@cabler.app_name.to_s}/).empty?
-        key = @cabler.app_name.to_s + '.' + key
-      end
+    def get(key, group = nil)
+      group ||= @cabler.group.to_s
 
-      val = @dataset.where(:key => key, :set => 'applications')
+      val = @dataset.where(:key => key, :group => group)
 
       if val.empty?
-        key.slice!(0, key.index('.') + 1)
-        val = @dataset.where(:key => key, :set => 'globals')
+        val = @dataset.where(:key => key, :group => "globals")
       end
 
       val.first[:value] rescue raise "key \'#{key}\' cannot be found!"
     end
 
-    def values_of(key, prefix = false)
-      values = {}
+    def get_children(key, group = nil)
+      group ||= @cabler.group.to_s
+      values = []
 
-      @key_prefix = key if prefix
-
-      res = @dataset.where(:key.like("#{key}%"))
+      res = @dataset.where(:key.like("#{key}%"), :group => group)
 
       if res.empty?
-        key.slice!(0, key.index('.') + 1)
-        res = @dataset.where(:key.like("#{key}%"))
+        res = @dataset.where(:key.like("#{key}%"), :group => "globals")
       end
+
+      key = key.split('.')
 
       res.each do |r|
         res_key = r[:key].split('.')
-        key.split('.').count.times do
-          res_key.delete_at(0)
-        end
-        values[res_key.shift.to_sym] = r[:value]
+        res_key = (res_key - key).shift
+        values.push(res_key)
       end
-      values rescue raise "no values for \'#{key}\'!"
+
+      values & values rescue raise "no values for \'#{key}\'!"
     end
 
     def create_table_if_needed
       @database.create_table! :cablingdatas do
         String :key
         String :value
-        String :set
+        String :group
       end
     end
   end

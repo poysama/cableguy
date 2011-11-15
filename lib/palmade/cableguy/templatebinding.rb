@@ -15,18 +15,27 @@ module Palmade::Cableguy
       @target = target
       @arg_hash = @cable.args[2]
       @db = @cabler.db
+      @key_prefix = []
     end
 
-    def get(key)
-      @db.value_of(key)
+    def get(key, group = nil)
+      if !@key_prefix.empty?
+        key = "#{@key_prefix.join('.')}.#{key}"
+      end
+
+      @db.get(key, group)
     end
 
-    def value_of(key)
-      @db.value_of(key)
-    end
+    def get_children(key, group = nil, &block)
+      if block_given?
+        key.split('.').each do |k|
+          @key_prefix << k
+        end
 
-    def values_of(key, prefix = false)
-      @db.values_of(key, prefix)
+        yield @db.get_children(key, group)
+      else
+        @db.get_children(key, group)
+      end
     end
 
     def parse(file_path)
@@ -34,6 +43,7 @@ module Palmade::Cableguy
       fcontents = File.read(file_path)
 
       parsed = ERB.new(fcontents, nil, "-%>", "@output_buffer").result(binding)
+      @key_prefix.clear
       parsed = special_parse(parsed, [ '{', '}' ], false)
     end
 
@@ -47,7 +57,7 @@ module Palmade::Cableguy
         if instance_variables.include?("@#{found}".to_sym)
           eval_ret = self.send(found)
         else
-          eval_ret = value_of(found)
+          eval_ret = get(found)
         end
       end
     end

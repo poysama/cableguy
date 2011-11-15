@@ -70,15 +70,11 @@ module Palmade::Cableguy
 
     def group(group, &block)
       @group = group
-      @db.group(&block)
+      @db.group(@group, &block)
     end
 
     def globals(&block)
       @db.globals(&block)
-    end
-
-    def applications(&block)
-      @db.applications(&block)
     end
 
     def prefix(prefix, &block)

@@ -14,7 +14,7 @@ module Palmade::Cableguy
     attr_reader :db_path
     attr_reader :db
     attr_accessor :targets
-    attr_accessor :app_name
+    attr_accessor :group
 
     def initialize(app_root, options)
       @options = options
