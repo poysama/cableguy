@@ -33,6 +33,7 @@ module Palmade::Cableguy
         end
 
         yield @db.get_children(key, group)
+        @key_prefix.clear
       else
         @db.get_children(key, group)
       end
@@ -43,7 +44,6 @@ module Palmade::Cableguy
       fcontents = File.read(file_path)
 
       parsed = ERB.new(fcontents, nil, "-%>", "@output_buffer").result(binding)
-      @key_prefix.clear
       parsed = special_parse(parsed, [ '{', '}' ], false)
     end
 
