@@ -23,10 +23,18 @@ module Palmade::Cableguy
       @target = @options[:target]
       @location = @options[:location]
       @builds = nil
-      @targets = [ :development ]
       @logger = Logger.new($stdout)
+      @targets = [ :development ]
       @db_path = File.join(@cabling_path, DB_DIRECTORY, "#{@target}.#{DB_EXTENSION}")
+
+      if @options[:verbose]
+        @logger.level = Logger::DEBUG
+      else
+        @logger.level = Logger::INFO
+      end
+
       @db = Palmade::Cableguy::DB.new(self)
+
     end
 
     def boot

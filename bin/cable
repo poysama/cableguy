@@ -5,6 +5,8 @@ require File.join(CABLE_LIB_PATH, 'cableguy')
 require 'optparse'
 
 options = {}
+options[:verbose] = false
+
 optparse = OptionParser.new do |opts|
   opts.banner = "Set cable options.\n"
 
@@ -16,8 +18,12 @@ optparse = OptionParser.new do |opts|
     options[:location] = location
   end
 
-  opts.on('t', '--target TARGET', 'Specify cabling target') do |target|
+  opts.on('-t', '--target TARGET', 'Specify cabling target') do |target|
     options[:target] = target
+  end
+
+  opts.on('-v', '--verbose', 'Verbose logging') do
+    options[:verbose] = true
   end
 
   opts.on('-h', '--help', 'Help screen') do

@@ -4,9 +4,8 @@ module Palmade::Cableguy
 
     def initialize(cabler)
       @cabler = cabler
-      @opts = { :logger => @cabler.logger,
-                :sql_log_level => :debug }
       @database = nil
+      @opts = { :logger => @cabler.logger, :sql_log_level => :debug }
     end
 
     def boot
