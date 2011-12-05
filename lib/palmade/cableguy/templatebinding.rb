@@ -5,6 +5,7 @@ module Palmade::Cableguy
     attr_reader :cabling
     attr_reader :arg_hash
     attr_reader :target
+    attr_reader :location
     attr_reader :db
     attr_accessor :output_buffer
 
@@ -13,6 +14,7 @@ module Palmade::Cableguy
       @cabler = cabler
       @cabling = cabling
       @target = target
+      @location = location
       @arg_hash = @cable.args[2]
       @db = @cabler.db
       @key_prefix = []
