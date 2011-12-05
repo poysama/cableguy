@@ -14,7 +14,7 @@ module Palmade::Cableguy
       @cabler = cabler
       @cabling = cabling
       @target = target
-      @location = location
+      @location = @cabler.location
       @arg_hash = @cable.args[2]
       @db = @cabler.db
       @key_prefix = []
