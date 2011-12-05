@@ -27,7 +27,7 @@ module Palmade::Cableguy
         if ENV.include?("CABLING_LOCATION")
           options[:location] = ENV["CABLING_LOCATION"]
         else
-          options[:location] = nil
+          options[:location] = options[:target]
         end
       end
 
