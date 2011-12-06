@@ -30,14 +30,34 @@ module Palmade::Cableguy
 
     def get_children(key, group = nil, &block)
       if block_given?
-        key.split('.').each do |k|
-          @key_prefix << k
-        end
+        fill_key_prefix(key)
 
         yield @db.get_children(key, group)
         @key_prefix.clear
       else
         @db.get_children(key, group)
+      end
+    end
+
+    def get_each_child(key, group = nil, &block)
+      if block_given?
+        fill_key_prefix(key)
+
+        children = @db.get_children(key, group)
+
+        children.each do |c|
+          yield c
+        end
+
+        @key_prefix.clear
+      else
+        @db.get_children(key, group)
+      end
+    end
+
+    def fill_key_prefix(key)
+      key.split('.').each do |k|
+        @key_prefix << k
       end
     end
 
