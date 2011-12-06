@@ -20,7 +20,7 @@ module Palmade::Cableguy
         path = File.join(@cabling_path, p)
 
         if p == 'targets'
-          if !@cabler.location.nil?
+          if !@cabler.location.nil? && @cabler.location != @cabler.target
             f = File.join(path, "#{@cabler.target}_#{@cabler.location}.rb")
           else
             f = File.join(path, "#{@cabler.target}.rb")
