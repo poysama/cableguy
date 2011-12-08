@@ -12,7 +12,7 @@ module Palmade::Cableguy
     end
 
     def boot
-      @cabler.db.create_table_if_needed
+      @db.create_table_if_needed
 
       file_stack = []
 

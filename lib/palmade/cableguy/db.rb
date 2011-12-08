@@ -5,13 +5,18 @@ module Palmade::Cableguy
     def initialize(cabler)
       @cabler = cabler
       @database = nil
-      @opts = { :logger => @cabler.logger, :sql_log_level => :debug }
+      @sql_options = { :logger => @cabler.logger, :sql_log_level => :info }
+
+      if @cabler.options[:verbose]
+        @sql_options[:sql_log_level] = :debug
+      end
     end
 
     def boot
-      @database = Sequel.sqlite(@cabler.db_path, @opts)
+      @database = Sequel.sqlite(@cabler.db_path, @sql_options)
       @group = ""
       @prefix_stack = []
+
       @dataset = @database[:cablingdatas]
     end
 
@@ -102,7 +107,11 @@ module Palmade::Cableguy
     end
 
     def create_table_if_needed
-      @database.create_table! :cablingdatas do
+      if @database.tables.include? :cablingdatas
+        @database.drop_table :cablingdatas
+      end
+
+      @database.create_table :cablingdatas do
         String :key
         String :value
         String :group

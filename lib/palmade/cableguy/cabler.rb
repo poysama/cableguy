@@ -30,11 +30,10 @@ module Palmade::Cableguy
       if @options[:verbose]
         @logger.level = Logger::DEBUG
       else
-        @logger.level = Logger::INFO
+        @logger.level = Logger::WARN
       end
 
       @db = Palmade::Cableguy::DB.new(self)
-
     end
 
     def boot
@@ -47,7 +46,11 @@ module Palmade::Cableguy
       init_file = File.join(@cabling_path, 'init.rb')
       require init_file if File.exist?(init_file)
 
-      Migration.new(self).boot
+      say_with_time "Migrating..." do
+        Migration.new(self).boot
+      end
+
+      say "Done!"
     end
 
     def configure
