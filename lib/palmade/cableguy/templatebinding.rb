@@ -7,6 +7,7 @@ module Palmade::Cableguy
     attr_reader :target
     attr_reader :location
     attr_reader :db
+    attr_reader :reserved_keys
     attr_accessor :output_buffer
 
     def initialize(cable, cabler, cabling, target)
@@ -18,6 +19,7 @@ module Palmade::Cableguy
       @arg_hash = @cable.args[2]
       @db = @cabler.db
       @key_prefix = []
+      @reserved_keys = ['target', 'location']
     end
 
     def get(key, group = nil)
@@ -76,7 +78,7 @@ module Palmade::Cableguy
       parsed = parsed.gsub(/#{delim0}(.+)#{delim1}/) do |match|
         found = $1
 
-        if instance_variables.include?("@#{found}".to_sym)
+        if @reserved_keys.include?(found)
           eval_ret = self.send(found)
         else
           eval_ret = get(found)
