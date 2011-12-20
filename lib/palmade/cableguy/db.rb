@@ -73,6 +73,20 @@ module Palmade::Cableguy
       @prefix_stack.pop
     end
 
+    def has_key?(key, group)
+      group ||= @cabler.group.to_s
+
+      val = @dataset.where(:key => key, :group => group).count
+
+      if val == 0
+        val = @dataset.where(:key => key, :group => "globals").count
+
+        val == 0 ? true : false
+      else
+        true
+      end
+    end
+
     def get(key, group = nil)
       group ||= @cabler.group.to_s
 
@@ -82,7 +96,11 @@ module Palmade::Cableguy
         val = @dataset.where(:key => key, :group => "globals")
       end
 
-      val.first[:value] rescue raise "key \'#{key}\' cannot be found!"
+      if val.count > 0
+        val.first[:value]
+      else
+        raise "key \'#{key}\' cannot be found!"
+      end
     end
 
     def get_children(key, group = nil)
@@ -103,7 +121,11 @@ module Palmade::Cableguy
         values.push(res_key)
       end
 
-      values & values rescue raise "no values for \'#{key}\'!"
+      if values.count > 0
+        values & values
+      else
+        raise "no values for \'#{key}\'!"
+      end
     end
 
     def create_table_if_needed

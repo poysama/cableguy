@@ -22,9 +22,21 @@ module Palmade::Cableguy
       @reserved_keys = ['target', 'location']
     end
 
+    def join_keys(key)
+      "#{@key_prefix.join('.')}.#{key}"
+    end
+
+    def has_key?(key, group = nil)
+      if !@key_prefix.empty?
+        key = join_keys(key)
+      end
+
+      @db.has_key?(key, group)
+    end
+
     def get(key, group = nil)
       if !@key_prefix.empty?
-        key = "#{@key_prefix.join('.')}.#{key}"
+        key = join_keys(key)
       end
 
       @db.get(key, group)
