@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-VERSION = "1.0.8.1"
+VERSION = "1.0.8.2"
 
 Gem::Specification.new do |s|
   s.name        = "cableguy"

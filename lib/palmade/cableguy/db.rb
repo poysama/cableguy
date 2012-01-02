@@ -81,7 +81,7 @@ module Palmade::Cableguy
       if val == 0
         val = @dataset.where(:key => key, :group => "globals").count
 
-        val == 0 ? true : false
+        val == 0 ? false : true
       else
         true
       end
