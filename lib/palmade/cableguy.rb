@@ -3,6 +3,7 @@ require 'benchmark'
 require 'fileutils'
 require 'sequel'
 require 'logger'
+require File.join(File.dirname(__FILE__), 'cableguy/version')
 
 module Palmade
   module Cableguy

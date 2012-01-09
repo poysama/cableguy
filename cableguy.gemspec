@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-VERSION = "1.0.8.2"
+require 'palmade/cableguy/version'
 
 Gem::Specification.new do |s|
   s.name        = "cableguy"
-  s.version     = VERSION
+  s.version     = Palmade::Cableguy::VERSION
   s.authors     = ["Jan Mendoza"]
   s.email       = ["poymode@gmail.com"]
   s.homepage    = "https://github.com/poymode/cableguy"

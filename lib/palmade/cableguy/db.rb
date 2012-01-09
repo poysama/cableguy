@@ -53,13 +53,17 @@ module Palmade::Cableguy
     def group(group = nil, &block)
       @group = group
 
-      yield
+      @database.transaction do
+        yield
+      end
     end
 
     def globals(&block)
       @group = "globals"
 
-      yield
+      @database.transaction do
+        yield
+      end
     end
 
     def prefix(prefix, &block)
