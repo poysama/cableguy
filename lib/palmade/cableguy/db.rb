@@ -44,9 +44,12 @@ module Palmade::Cableguy
       stack_pop
     end
 
-    def update(key, value, set = nil)
+    def update(key, value, group = nil)
+      group ||= @group
       key = final_key(key)
-      @dataset.filter(:key => key).update(:value => value)
+
+      @dataset.filter(:key => key, :group => group).update(:value => value)
+
       stack_pop
     end
 
