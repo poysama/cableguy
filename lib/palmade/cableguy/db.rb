@@ -38,9 +38,12 @@ module Palmade::Cableguy
       stack_pop
     end
 
-    def delete(key, value)
+    def delete_key(key, group = nil)
+      group ||= @group
+
       key = final_key(key)
-      @dataset.filter(:key => key).delete
+
+      @dataset.filter(:key => key, :group => group).delete
       stack_pop
     end
 
@@ -108,6 +111,12 @@ module Palmade::Cableguy
       else
         raise "key \'#{key}\' cannot be found!"
       end
+    end
+
+    def get_if_key_exists(key, group = nil)
+      group ||= @cabler.group.to_s
+
+      get_key(key, group) if has_key?(key, group)
     end
 
     def get_children(key, group = nil)
