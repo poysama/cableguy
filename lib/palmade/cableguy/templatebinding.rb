@@ -34,6 +34,14 @@ module Palmade::Cableguy
       @db.has_key?(key, group)
     end
 
+    def get_if_key_exists(key, group = nil)
+      if !@key_prefix.empty?
+        key = join_keys(key)
+      end
+
+      @db.get_if_key_exists(key, group)
+    end
+
     def get(key, group = nil)
       if !@key_prefix.empty?
         key = join_keys(key)

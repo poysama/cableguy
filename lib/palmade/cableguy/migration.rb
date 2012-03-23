@@ -81,8 +81,8 @@ module Palmade::Cableguy
       @db.prefix(prefix, &block)
     end
 
-    def delete(key, value = nil)
-      @db.delete(key, value)
+    def delete_key(key, group = nil)
+      @db.delete_key(key, group)
     end
 
     def update(key, value)
