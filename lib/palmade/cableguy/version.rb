@@ -1,5 +1,5 @@
 module Palmade
   module Cableguy
-    VERSION = "1.1.2"
+    VERSION = "0.2.3"
   end
 end
