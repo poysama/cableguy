@@ -1,3 +1,5 @@
+require 'mjolnir'
+
 module Palmade::Cableguy
   class Cabler
     include Constants
@@ -33,7 +35,8 @@ module Palmade::Cableguy
         @logger.level = Logger::WARN
       end
 
-      @db = Palmade::Cableguy::DB.new(self)
+      @db = Mjolnir::Base.new(self)
+#      @db = Palmade::Cableguy::DB.new(self)
     end
 
     def boot

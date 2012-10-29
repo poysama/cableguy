@@ -12,8 +12,6 @@ Gem::Specification.new do |s|
   s.description = %q{cableguy}
 
   s.rubyforge_project = "cableguy"
-  s.add_dependency "sqlite3"
-  s.add_dependency "sequel"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
