@@ -123,10 +123,10 @@ module Palmade::Cableguy
       group ||= @cabler.group.to_s
       values = []
 
-      res = @dataset.where(:key.like("#{key}%"), :group => group)
+      res = @dataset.where(Sequel.like(:key, "#{key}%"), :group => group)
 
       if res.empty?
-        res = @dataset.where(:key.like("#{key}%"), :group => "globals")
+        res = @dataset.where(Sequel.like(:key, "#{key}%"), :group => "globals")
       end
 
       key = key.split('.')
