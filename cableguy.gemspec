@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "cableguy"
   s.add_dependency "sqlite3"
-  s.add_dependency "sequel"
+  s.add_dependency "sequel", "=3.47.0"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -21,6 +21,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
+  s.add_development_dependency "rake"
   # s.add_runtime_dependency "rest-client"
 end
