@@ -1,22 +1,8 @@
 module Palmade::Cableguy
   module Builders
-    def self.load_all_builders
-      CableTemplate
-      CableMkdir
-      CableChmod
-      CableSymlink
-      CableCustom
-      CableMove
-      CableCopy
-    end
-
-    autoload :CableChmod, File.join(File.dirname(__FILE__), 'builders/cable_chmod')
-    autoload :CableCustom, File.join(File.dirname(__FILE__), 'builders/cable_custom')
-    autoload :CableMkdir, File.join(File.dirname(__FILE__), 'builders/cable_mkdir')
-    autoload :CableSymlink, File.join(File.dirname(__FILE__), 'builders/cable_symlink')
-    autoload :CableTemplate, File.join(File.dirname(__FILE__), 'builders/cable_template')
-    autoload :CableMove, File.join(File.dirname(__FILE__), 'builders/cable_move')
-    autoload :CableCopy, File.join(File.dirname(__FILE__), 'builders/cable_copy')
+    autoload :Template,  'palmade/cableguy/builders/template'
+    autoload :Directory, 'palmade/cableguy/builders/directory'
+    autoload :Link,      'palmade/cableguy/builders/link'
   end
 end
 

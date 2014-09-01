@@ -1,26 +1,27 @@
-# -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'palmade/cableguy/version'
 
-Gem::Specification.new do |s|
-  s.name        = "cableguy"
-  s.version     = Palmade::Cableguy::VERSION
-  s.authors     = ["Jan Mendoza"]
-  s.email       = ["poymode@gmail.com"]
-  s.homepage    = "https://github.com/poymode/cableguy"
-  s.summary     = %q{Generate rails configurations from a sqlite key-value storage}
-  s.description = %q{cableguy}
+Gem::Specification.new do |spec|
+  spec.name          = "cableguy"
+  spec.version       = Palmade::Cableguy::VERSION
+  spec.authors       = ["Jan Mendoza"]
+  spec.email         = ["poymode@gmail.com"]
+  spec.summary       = %q{Write a short summary. Required.}
+  spec.description   = %q{Write a longer description. Optional.}
+  spec.homepage      = ""
+  spec.license       = "MIT"
 
-  s.rubyforge_project = "cableguy"
-  s.add_dependency "sqlite3"
-  s.add_dependency "sequel", "=3.47.0"
+  spec.files         = `git ls-files -z`.split("\x0")
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.require_paths = ["lib"]
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
-
-  # specify any dependencies here; for example:
-  s.add_development_dependency "rake"
-  # s.add_runtime_dependency "rest-client"
+  spec.add_dependency "thor"
+  spec.add_dependency "rest-client"
+  spec.add_dependency "json"
+  spec.add_development_dependency "rspec", "~> 2"
+  spec.add_development_dependency "bundler", "~> 1.6"
+  spec.add_development_dependency "rake", "~> 10.0"
 end

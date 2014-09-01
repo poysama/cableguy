@@ -1,0 +1,22 @@
+# REST source
+source "http://10.48.30.75:5984/chronic/account"
+
+# adjust template path
+# default is config/templates
+
+template_path 'config/templates'
+
+# simple template
+template 'database.yml'
+
+# simple dir
+# can be a single dir, string or multi, array
+# relative or absolute
+
+directory 'tmp/socks'
+directory ['log', 'tmp/pids']
+
+# simple link
+# arg1 source, arg2 dest
+link 'libwww', '/opt/libwww'
+
